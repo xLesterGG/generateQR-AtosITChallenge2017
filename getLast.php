@@ -5,10 +5,10 @@
 
     if(mysql_num_rows($checkfortrans) != 0)
     {
-        $result = mysql_query("SELECT nxtAccountNumber,numberOfBatches,secretPhrase FROM nxtAccounts");
+        $result = mysql_query("SELECT * FROM nxtAccounts ORDER BY recordID DESC LIMIT 1");
         $rows = array();
         while($r = mysql_fetch_assoc($result)) {
-            $rows['accs'][] = $r;
+            $rows['accs'][]= $r;
         }
 
         print json_encode($rows);

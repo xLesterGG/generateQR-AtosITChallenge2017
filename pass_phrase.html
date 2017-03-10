@@ -106,7 +106,7 @@
                     <label for="generatedPassword">Generated Password</label>
                     <input type="text" class="form-control" id="generatedPassword" readonly ng-model="password"/>
                     <br />
-                    <button type="button" class="btn btn-primary btn-lg" ng-click="makeAccount(password)">Get Account Number</button>
+                    <button type="button" ng-show="showgetbutton" class="btn btn-primary btn-lg" ng-click="makeAccount(password)">Get Account Number</button>
                 </div>
             </div>
         </div>
@@ -124,7 +124,7 @@
             <div class="col-md-4 col-xs-10">
                 <div class="form-group">
                     <label for="productName">Product Name</label>
-                    <input type="text" class="form-control" id="productName" ng-model="productName" placeholder="Product Name"/>
+                    <input type="text" class="form-control" id="productName" ng-change="clearqr()" ng-model="productName" placeholder="Product Name"/>
 
                 </div>
             </div>
@@ -134,10 +134,10 @@
             <div class="col-md-4 col-xs-10">
                 <div class="form-group">
                     <label for="batchID">Item batch ID</label>
-                    <input type="text" class="form-control" id="batchID" ng-model="batchID" placeholder="Item Batch ID"/>
+                    <input type="text" class="form-control" id="batchID" ng-change="clearqr()" ng-model="batchID" placeholder="Item Batch ID"/>
 
                     <br />
-                    <button type="button" class="btn btn-primary btn-lg" ng-click="getQRData(accNum,batchID,productName)">Get QR</button>
+                    <button type="button" ng-show="showqrgen" class="btn btn-primary btn-lg" ng-click="getQRData(accNum,batchID,productName)">Get QR</button>
 
                 </div>
             </div>
