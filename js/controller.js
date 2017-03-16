@@ -53,7 +53,9 @@ app.controller("myCtrl",function($scope,$http){
     $scope.makeAccount = (input)=>{
     //    console.log(input);
         //NXT-F2PW-KURF-MWKL-HKEAK
-          $http.get('http://174.140.168.136:6876/nxt?requestType=getAccountId&secretPhrase='+encodeURIComponent("NXT-GW48-BC6N-GUWN-ASCFB"))
+
+        //NXT-GW48-BC6N-GUWN-ASCFB
+          $http.get('http://174.140.168.136:6876/nxt?requestType=getAccountId&secretPhrase='+encodeURIComponent(input))
         //$http.get('http://174.140.168.136:6876/nxt?requestType=getAccountId&secretPhrase='+ encodeURIComponent("bridge twice ash force birth pause trickle sharp tender disappear spoken kid"))
             .then(
                 function(response){
@@ -63,7 +65,7 @@ app.controller("myCtrl",function($scope,$http){
 
                 },
                 function(response){
-                    alert("ERROR in making account,po contact your system administrator");
+                    alert("ERROR in making account,please contact your system administrator");
                     console.log(response);
                 }
             );
@@ -116,12 +118,34 @@ app.controller("myCtrl",function($scope,$http){
             .then(
                 function(response){
                     console.log(response);
+                    //$scope.sendMoney($scope.accNum);
                 },
                 function(response){
                     alert('An error has occured, please check console for more information');
                     console.log(response);
                 }
             );
+    }
+
+//    http://174.140.168.136:6876/nxt?requestType=sendMoney&secretPhrase=IWontTellYou&amountNQT=100000000&feeNQT=100000000&deadline=60&recipient=NXT-4VNQ-RWZC-4WWQ-GVM8S
+
+//100000000
+//100000000
+
+    $scope.sendMoney = (accNumber)=>{ // funding created account from a main account
+        //NXT-2N9Y-MQ6D-WAAS-G88VH
+        $scope.masterpw = "appear morning crap became fire liquid probably tease rare swear shut grief";
+        $http.post('http://174.140.168.136:6876/nxt?requestType=sendMoney&secretPhrase='+ encodeURIComponent($scope.masterpw) +'&amountNQT=5000000000&feeNQT=0&deadline=60&recipient='+encodeURIComponent(accNumber))
+        .then(
+            function(response){
+                console.log("Sending money")
+                console.log(response.data);
+            },
+            function(response){
+                alert("ERROR in sending, contact your system administrator");
+                console.log(response);
+            }
+        );
     }
 
 
@@ -180,10 +204,9 @@ app.controller("myCtrl",function($scope,$http){
     				}
     			);
         }
-
-
-
     }
+
+
 
     $scope.clearqr = ()=>{
         // qrcode.clear();
