@@ -15,7 +15,9 @@ app.controller("myCtrl",function($scope,$http){
                 if(response.data== "No data yet"){
                     console.log('db no data');
                     $scope.password = document.results.text.value;
-                    console.log($scope.password);
+                    //console.log($scope.password.length);
+                    $scope.password = $scope.password.trim();
+                    console.log($scope.password.length);
 
                     $scope.showqrgen = false;
 
