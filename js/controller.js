@@ -1,128 +1,125 @@
 var app = angular.module("myApp",[]);
 
 app.controller("myCtrl",function($scope,$http){
-    $scope.showgetbutton = true;
-    $scope.showqrgen = true;
+    $scope.showgetbutton = true;  //initialize boolean to show get account number to true as default
+    $scope.showqrgen = true; // boolean to show / hide generate qr button
 
-    $scope.currentbatch = 0;
-    $scope.recordID = 1;
+    $scope.currentbatch = 0;  //default value for newly created accounts, will be updated if there is existing account in db later on
+    $scope.recordID = 1;   // default value for first account (if no accounts yet)
 
-    var qrcode = new QRCode(document.getElementById("qrcode"));
+    var qrcode = new QRCode(document.getElementById("qrcode"));   //initialize QR object
 
-    $http.get('getLast.php')
+    $http.get('getLast.php') // performs a GET request to check if there are any account in db yet / obtains most recent account's information
         .then(
             function(response){
-                if(response.data== "No data yet"){
-                    console.log('db no data');
-                    $scope.password = document.results.text.value;
-                    //console.log($scope.password.length);
-                    $scope.password = $scope.password.trim();
-                    console.log($scope.password.length);
+                if(response.data== "No data yet"){  // if no data
 
-                    $scope.showqrgen = false;
+                    console.log('db no data');
+                    $scope.password = document.results.text.value;   //get password from a generated secret phrase using javascrypt (hidden div), https://www.fourmilab.ch/javascrypt/pass_phrase.html
+
+                    $scope.password = $scope.password.trim(); // remove whitespace
+                    $scope.showqrgen = false; // hides qr generation button as there is no account
 
                 }
-                else{
-                    console.log(response.data.accs[0].numberOfBatches);
-
+                else{  // if there are existing account
+                    // console.log(response.data.accs[0].numberOfBatches);
                     //console.log(response.data.accs[0])
-                    if(response.data.accs[0].numberOfBatches <100)
-                    {
-                        $scope.password = response.data.accs[0].secretPhrase;
-                        $scope.accNum = response.data.accs[0].nxtAccountNumber;
-                        $scope.showgetbutton = false;
 
-                        $scope.currentbatch = parseInt(response.data.accs[0].numberOfBatches);
-                        $scope.recordID = response.data.accs[0].recordID;
+                    if(response.data.accs[0].numberOfBatches <100)  //information regarding the last account (most recent one will be retrieved)
+                                                                    //each account is supposed to carry 100 batches, if not yet reach 100, the information will be used for the next qr generation
+                    {
+                        $scope.password = response.data.accs[0].secretPhrase;  //obtains secret phrase required for transaction for this particular account
+                        $scope.accNum = response.data.accs[0].nxtAccountNumber;  //obtains nxt account number which is also required for qr generation / transaction
+                        $scope.showgetbutton = false; // hides get account number button, only shown when there is no existing account / a new account needs to be generated
+
+                        $scope.currentbatch = parseInt(response.data.accs[0].numberOfBatches); // obtains the current number of batches for this particular account
+                        $scope.recordID = response.data.accs[0].recordID; // obtains the record id of current account
                     }
-                    else{
-                        $scope.password = document.results.text.value;
-                        $scope.showqrgen = false;
+                    else{ // if most recent account has 100 account (max)
+                        $scope.password = document.results.text.value; //get password from a generated secret phrase using javascrypt (hidden div), https://www.fourmilab.ch/javascrypt/pass_phrase.html
+                        $scope.showqrgen = false; // hide generate qr button
                         $scope.recordID = parseInt(response.data.accs[0].recordID) + 1;
 
                     }
 
                 }
             },
-            function(response){
-                alert("Database error, please check with your system administrator");
+            function(response){  //display error to user if something goes wrong
+                alert("Get Last account error, please contact with your system administrator, and check the browser's console for more information");
                 console.log(response);
             }
         );
 
 
 
-    $scope.makeAccount = (input)=>{
-    //    console.log(input);
-        //NXT-F2PW-KURF-MWKL-HKEAK
+    $scope.makeAccount = (pass)=>{  // recieves secret phrase generated in textbox
 
-        //NXT-GW48-BC6N-GUWN-ASCFB
-          $http.get('http://174.140.168.136:6876/nxt?requestType=getAccountId&secretPhrase='+encodeURIComponent(input))
-        //$http.get('http://174.140.168.136:6876/nxt?requestType=getAccountId&secretPhrase='+ encodeURIComponent("bridge twice ash force birth pause trickle sharp tender disappear spoken kid"))
+          $http.get('http://174.140.168.136:6876/nxt?requestType=getAccountId&secretPhrase='+encodeURIComponent(pass))  // NXT blockchain api call to get nxt account number using secret phrase
             .then(
                 function(response){
-                    console.log(response.data);
+                    // console.log(response.data);
                     //http://http://174.140.168.136:6876/nxt?requestType=getAccountPublicKey&account=GENERATED_ACCOUNT_NUMBER
-                    $scope.checkAccount(response.data.accountRS);
+
+                    $scope.checkAccount(response.data.accountRS); // pass returned account number for checking if account already exists
 
                 },
-                function(response){
-                    alert("ERROR in making account,please contact your system administrator");
+                function(response){ // error alert
+                    alert("ERROR in making account,please contact your system administrator,and check the browser's console for more information");
                     console.log(response);
                 }
             );
-        //174.140.168.136:6876/nxt?requestType=getAccountId&secretPhrase=
     }
 
-    $scope.checkAccount = (accNumber)=>{
-        $http.get('http://174.140.168.136:6876/nxt?requestType=getAccountPublicKey&account='+encodeURIComponent(accNumber))
+    $scope.checkAccount = (accNumber)=>{ // to check if account already exited before this (if generated password is by some coincedence some people's account)
+        $http.get('http://174.140.168.136:6876/nxt?requestType=getAccountPublicKey&account='+encodeURIComponent(accNumber)) //blockchain api call to get account's public key
         .then(
             function(response){
-                if(response.data.hasOwnProperty('publicKey')){
-                    //console.log("haspublic key");
-                    alert('Generated account has existed, the page will now refresh. Please try again');
+                if(response.data.hasOwnProperty('publicKey')){ // if response contains public key, it means it might be someone else's account (only an account which has made a valid)
+                                                                // transaction on the blockchain has a public key. A new acccount that we created does not have one.
+
+                    alert('Generated account has existed, the page will now refresh. Please try again'); // alert the user for page reload
                     location.reload();
                 }
-                else{
+                else{  // if no public key, then new account creation is successful
                     $scope.accNum = accNumber;
-                    $scope.addToDB();
-
-                    $scope.showqrgen = true;
-
-
+                    $scope.addToDB();  // add generated account details to db
+                    //$scope.showqrgen = true; // show qr generation button after added to db
                 }
             },
             function(response){
-                alert("ERROR in checking account, contact your system administrator");
+                alert("ERROR in checking account, contact your system administrator and check console for more information");
                 console.log(response);
             }
         );
     }
 
 
-    $scope.addToDB = ()=>{
+    $scope.addToDB = ()=>{ // add generated account details to db
         var url = "addtoDB.php";
 
         var data = $.param({
             nxtAccountNumber: $scope.accNum,
             numberOfBatches: 0,
             secretPhrase:$scope.password
-        });
+        }); // prepare data
 
-        //console.log("data is" + data);
         var config = {
             headers : {
                 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
             }
-        };
+        }; // set content header
 
-        $http.post(url,data,config)
+        $http.post(url,data,config) // makes post request to db
             .then(
-                function(response){
+                function(response){ // if successful
                     console.log(response);
-                    //$scope.sendMoney($scope.accNum);
+                    //improve
+                    $scope.showqrgen = true; // show qr generation button after added to db
+
+                    //$scope.sendMoney($scope.accNum); // sends nxt from main account to this account so that it is able to make transactions.
+
                 },
-                function(response){
+                function(response){ //if error
                     alert('An error has occured, please check console for more information');
                     console.log(response);
                 }
@@ -131,28 +128,26 @@ app.controller("myCtrl",function($scope,$http){
 
 //    http://174.140.168.136:6876/nxt?requestType=sendMoney&secretPhrase=IWontTellYou&amountNQT=100000000&feeNQT=100000000&deadline=60&recipient=NXT-4VNQ-RWZC-4WWQ-GVM8S
 
-//100000000
-//100000000
-
     $scope.sendMoney = (accNumber)=>{ // funding created account from a main account
         //NXT-2N9Y-MQ6D-WAAS-G88VH
-        $scope.masterpw = "appear morning crap became fire liquid probably tease rare swear shut grief";
+        $scope.masterpw = "appear morning crap became fire liquid probably tease rare swear shut grief"; //password for main account
+
+        //api call to send money to current account, 50 nxt for now.
         $http.post('http://174.140.168.136:6876/nxt?requestType=sendMoney&secretPhrase='+ encodeURIComponent($scope.masterpw) +'&amountNQT=5000000000&feeNQT=0&deadline=60&recipient='+encodeURIComponent(accNumber))
         .then(
             function(response){
                 console.log("Sending money")
                 console.log(response.data);
             },
-            function(response){
-                alert("ERROR in sending, contact your system administrator");
+            function(response){ // for
+                alert("ERROR in sending nxt, contact your system administrator and check console for more information");
                 console.log(response);
             }
         );
     }
 
 
-    $scope.getQRData = (accNum,batchID,productName)=>{
-        //console.log(accNum + batchID);
+    $scope.getQRData = (accNum,batchID,productName)=>{ // obtains to be generated qr data from inputs (textboxes)
         var obj = {};
 
         obj.nxtAccNum = accNum;
@@ -161,39 +156,31 @@ app.controller("myCtrl",function($scope,$http){
 
         console.log(obj);
     //    qrcode.clear();
-        qrcode.makeCode(JSON.stringify(obj));
-
-
-        $scope.showqrgen = false;
+        qrcode.makeCode(JSON.stringify(obj)); // turn into json
+        $scope.showqrgen = false;  //hide qr button after generating
 
         var url = "updateBatchCount.php";
-
-
-        console.log()
 
         var data = $.param({
             recordID : $scope.recordID,
             numberOfBatches : ($scope.currentbatch + 1)
-        });
+        }); // prepare data to update
 
-        $scope.currentbatch = $scope.currentbatch + 1;
+        $scope.currentbatch = $scope.currentbatch + 1; // updates data in current context
 
-        console.log(data);
-
-
-
-        if($scope.currentbatch >100){
+        if($scope.currentbatch >100){  // this is to check if current account has >100 (after +1 above) as checking only occurs when loading a page, and page does not reload upon creating qr
+                                        // if user created few qr in a row without refreshing the page, this will catch the condition where the current batch is at 100 and refreshes the page to make new account.
             alert('Account has over 100 batches, the page will now refresh for a new account.');
             location.reload();
         }
-        else{
+        else{ // if account has not reached 100
             var config = {
                 headers : {
                     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
                 }
             };
 
-            $http.put(url, data, config)
+            $http.put(url, data, config) // updates current account row , where batch + 1;
     			.then(
     				function (response) {
                         console.log("success");
@@ -201,7 +188,7 @@ app.controller("myCtrl",function($scope,$http){
 
     				},
     				function (response) {
-                        alert('Something went wrong when trying to update number of batches, please check console');
+                        alert('Something went wrong when trying to update number of batches, please check console and contact your system administrator');
                         console.log(response);
     				}
     			);
@@ -209,8 +196,7 @@ app.controller("myCtrl",function($scope,$http){
     }
 
 
-
-    $scope.clearqr = ()=>{
+    $scope.showqrbtn = ()=>{
         // qrcode.clear();
         if($scope.accNumber!='')
         {
