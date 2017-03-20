@@ -11,8 +11,10 @@
     <script type="text/javascript" language="JavaScript" src="js/md5.js"></script>
     <script type="text/javascript" language="JavaScript" src="js/wordtab.js"></script>
     <script type="text/javascript" language="JavaScript" src="js/utf-8.js"></script>
-    <script type="text/javascript" language="Javascript" src="js/pass_phrase.js"></script>
-    <script type="text/javascript" src="js/qrcode.js"></script>
+    <script type="text/javascript" language="Javascript" src="js/pass_phrase.js"></script>   <!--Taken and modified from https://www.fourmilab.ch/javascrypt/pass_phrase.html -->
+
+
+    <script type="text/javascript" src="js/qrcode.js"></script> <!--taken and used from https://davidshimjs.github.io/qrcodejs/ -->
 
 
     <script type="text/javascript" src="js/jquery-3.1.1.js"></script>
@@ -27,6 +29,7 @@
 
 <body onload="nowLoaded(); ce(); GeneratePassPhrases();">
 
+    <!--Taken and modified from https://www.fourmilab.ch/javascrypt/pass_phrase.html -->
     <div style="display:none">
         <form name="seed" action="#" onsubmit="return false;">
 
@@ -86,6 +89,9 @@
         </form>
 
     </div>
+    <!--Taken and modified from https://www.fourmilab.ch/javascrypt/pass_phrase.html -->
+
+
 
     <div class="container" ng-controller="myCtrl">
         <nav class="navbar navbar-default">
@@ -150,7 +156,7 @@
 
 </body>
 
-<script type="text/javascript" src="js/controller.js"></script>
+<script type="text/javascript" src="js/controller.js"></script> <!-- logics for this application-->
 
 
 
