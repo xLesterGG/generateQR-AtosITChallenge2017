@@ -116,7 +116,7 @@ app.controller("myCtrl",function($scope,$http){
                     //improve
                     $scope.showqrgen = true; // show qr generation button after added to db
 
-                    //$scope.sendMoney($scope.accNum); // sends nxt from main account to this account so that it is able to make transactions.
+                    $scope.sendMoney($scope.accNum); // sends nxt from main account to this account so that it is able to make transactions.
 
                 },
                 function(response){ //if error
@@ -150,49 +150,58 @@ app.controller("myCtrl",function($scope,$http){
     $scope.getQRData = (accNum,batchID,productName)=>{ // obtains to be generated qr data from inputs (textboxes)
         var obj = {};
 
-        obj.nxtAccNum = accNum;
-        obj.batchID = batchID;
-        obj.productName = productName;
 
-        console.log(obj);
-    //    qrcode.clear();
-        qrcode.makeCode(JSON.stringify(obj)); // turn into json
-        $scope.showqrgen = false;  //hide qr button after generating
-
-        var url = "updateBatchCount.php";
-
-        var data = $.param({
-            recordID : $scope.recordID,
-            numberOfBatches : ($scope.currentbatch + 1)
-        }); // prepare data to update
-
-        $scope.currentbatch = $scope.currentbatch + 1; // updates data in current context
-
-        if($scope.currentbatch >100){  // this is to check if current account has >100 (after +1 above) as checking only occurs when loading a page, and page does not reload upon creating qr
-                                        // if user created few qr in a row without refreshing the page, this will catch the condition where the current batch is at 100 and refreshes the page to make new account.
-            alert('Account has over 100 batches, the page will now refresh for a new account.');
-            location.reload();
+        if(productName== null || batchID== null)
+        {
+            alert('Please fill in the required fields');
         }
-        else{ // if account has not reached 100
-            var config = {
-                headers : {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
-                }
-            };
+        else{
+            obj.nxtAccNum = accNum;
+            obj.batchID = batchID;
+            obj.productName = productName;
 
-            $http.put(url, data, config) // updates current account row , where batch + 1;
-    			.then(
-    				function (response) {
-                        console.log("success");
-                        console.log(response);
+            console.log(obj);
+        //    qrcode.clear();
+            qrcode.makeCode(JSON.stringify(obj)); // turn into json
+            $scope.showqrgen = false;  //hide qr button after generating
 
-    				},
-    				function (response) {
-                        alert('Something went wrong when trying to update number of batches, please check console and contact your system administrator');
-                        console.log(response);
-    				}
-    			);
+            var url = "updateBatchCount.php";
+
+            var data = $.param({
+                recordID : $scope.recordID,
+                numberOfBatches : ($scope.currentbatch + 1)
+            }); // prepare data to update
+
+            $scope.currentbatch = $scope.currentbatch + 1; // updates data in current context
+
+            if($scope.currentbatch >100){  // this is to check if current account has >100 (after +1 above) as checking only occurs when loading a page, and page does not reload upon creating qr
+                                            // if user created few qr in a row without refreshing the page, this will catch the condition where the current batch is at 100 and refreshes the page to make new account.
+                alert('Account has over 100 batches, the page will now refresh for a new account.');
+                location.reload();
+            }
+            else{ // if account has not reached 100
+                var config = {
+                    headers : {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+                    }
+                };
+
+                $http.put(url, data, config) // updates current account row , where batch + 1;
+        			.then(
+        				function (response) {
+                            console.log("success");
+                            console.log(response);
+
+        				},
+        				function (response) {
+                            alert('Something went wrong when trying to update number of batches, please check console and contact your system administrator');
+                            console.log(response);
+        				}
+        			);
+            }
         }
+
+
     }
 
 
