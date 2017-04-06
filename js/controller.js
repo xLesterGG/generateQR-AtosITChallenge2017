@@ -147,7 +147,7 @@ app.controller("myCtrl",function($scope,$http){
     }
 
 
-    $scope.getQRData = (accNum,batchID,productName)=>{ // obtains to be generated qr data from inputs (textboxes)
+    $scope.getQRData = (accNum,batchID,productName,itemQuantity)=>{ // obtains to be generated qr data from inputs (textboxes)
         var obj = {};
 
 
@@ -159,6 +159,7 @@ app.controller("myCtrl",function($scope,$http){
             obj.nxtAccNum = accNum;
             obj.batchID = batchID;
             obj.productName = productName;
+            obj.Quantity = itemQuantity;
 
             console.log(obj);
         //    qrcode.clear();
