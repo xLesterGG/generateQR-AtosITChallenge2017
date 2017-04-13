@@ -69,6 +69,8 @@ app.controller("myCtrl",function($scope,$http){
     }
 
     $scope.checkAccount = (accNumber)=>{ // to check if account already exited before this (if generated password is by some coincedence some people's account)
+        //change accNum to NXT-2N9Y-MQ6D-WAAS-G88VH to test this function. Empty database or make sure the last account in the database has 100 batches to test this (condition to make new account).
+
         $http.get('http://174.140.168.136:6876/nxt?requestType=getAccountPublicKey&account='+encodeURIComponent(accNumber)) //blockchain api call to get account's public key
         .then(
             function(response){
@@ -143,6 +145,7 @@ app.controller("myCtrl",function($scope,$http){
 
             qrcode.makeCode(JSON.stringify(obj)); // turn into json
             $scope.showqrgen = false;  //hide qr button after generating
+
 
             var url = "updateBatchCount.php";
 
