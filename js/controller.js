@@ -57,8 +57,6 @@ app.controller("myCtrl",function($scope,$http){
           $http.get('http://174.140.168.136:6876/nxt?requestType=getAccountId&secretPhrase='+encodeURIComponent(pass))  // NXT blockchain api call to get nxt account number using secret phrase
             .then(
                 function(response){
-                    // console.log(response.data);
-                    //http://http://174.140.168.136:6876/nxt?requestType=getAccountPublicKey&account=GENERATED_ACCOUNT_NUMBER
 
                     $scope.checkAccount(response.data.accountRS); // pass returned account number for checking if account already exists
 
@@ -115,35 +113,12 @@ app.controller("myCtrl",function($scope,$http){
                     console.log(response);
                     //improve
                     $scope.showqrgen = true; // show qr generation button after added to db
-
-                    $scope.sendMoney($scope.accNum); // sends nxt from main account to this account so that it is able to make transactions.
-
                 },
                 function(response){ //if error
                     alert('An error has occured, please check console for more information');
                     console.log(response);
                 }
             );
-    }
-
-//    http://174.140.168.136:6876/nxt?requestType=sendMoney&secretPhrase=IWontTellYou&amountNQT=100000000&feeNQT=100000000&deadline=60&recipient=NXT-4VNQ-RWZC-4WWQ-GVM8S
-
-    $scope.sendMoney = (accNumber)=>{ // funding created account from a main account
-        //NXT-2N9Y-MQ6D-WAAS-G88VH
-        $scope.masterpw = "appear morning crap became fire liquid probably tease rare swear shut grief"; //password for main account
-
-        //api call to send money to current account, 50 nxt for now.
-        $http.post('http://174.140.168.136:6876/nxt?requestType=sendMoney&secretPhrase='+ encodeURIComponent($scope.masterpw) +'&amountNQT=5000000000&feeNQT=0&deadline=60&recipient='+encodeURIComponent(accNumber))
-        .then(
-            function(response){
-                console.log("Sending money")
-                console.log(response.data);
-            },
-            function(response){ // for
-                alert("ERROR in sending nxt, contact your system administrator and check console for more information");
-                console.log(response);
-            }
-        );
     }
 
 
@@ -163,6 +138,9 @@ app.controller("myCtrl",function($scope,$http){
 
             console.log(obj);
         //    qrcode.clear();
+
+            $scope.showqrdiv = true;
+
             qrcode.makeCode(JSON.stringify(obj)); // turn into json
             $scope.showqrgen = false;  //hide qr button after generating
 
@@ -207,10 +185,14 @@ app.controller("myCtrl",function($scope,$http){
 
 
     $scope.showqrbtn = ()=>{
-        // qrcode.clear();
         if($scope.accNumber!='')
         {
             $scope.showqrgen = true;
+
+            if($scope.showqrdiv == true){
+                $scope.showqrdiv = false;
+            }
+
         }
     }
 
