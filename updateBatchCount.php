@@ -1,6 +1,11 @@
 <?php
     include('dbconfig.php');
 
+    // $_POST['nxtAccountNumber']
+
+    // echo $_POST['value'];
+
+    // $data = json_decode(file_get_contents("php://input"));
     parse_str(file_get_contents("php://input"),$put_vars);
 
     if($put_vars['recordID'] !== '' || $put_vars['numberOfBatches'] !== '')
@@ -19,16 +24,7 @@
             echo "Error: " . $sql;
         }
 
-        // $result = @mysql_query($sql);
-        //
-        // if($result)
-        // {
-        //     echo "Successfully updated batch count";
-        // }
-        // else
-        // {
-        //     echo "Error: " . $sql;
-        // }
+
     }
 
 ?>

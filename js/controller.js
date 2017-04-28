@@ -168,10 +168,10 @@ app.controller("myCtrl",function($scope,$http){
                     }
                 };
 
-                $http.put(url, data, config) // updates current account row , where batch + 1;
+                $http.post(url, data, config) // updates current account row , where batch + 1; tempoparily changed to post instead of put because web hosting service has issues with .put
         			.then(
         				function (response) {
-                            console.log("success");
+                            console.log("update success");
                             console.log(response);
 
         				},
