@@ -1,21 +1,24 @@
 <?php
     include('dbconfig.php');
 
-    $checkfortrans = mysql_query("SELECT nxtAccountNumber,numberOfBatches,secretPhrase FROM nxtAccounts");
+    $checkfortrans = $conn->query("SELECT nxtAccountNumber,numberOfBatches,secretPhrase FROM nxtAccounts");
+    // echo $checkfortrans;
 
-    if(mysql_num_rows($checkfortrans) != 0)
+    // $a = $conn->query("SELECT COUNT(*) FROM nxtAccounts;");
+    // echo mysqli_num_rows($checkfortrans);
+
+    if(mysqli_num_rows($checkfortrans) == 0)
     {
-        $result = mysql_query("SELECT * FROM nxtAccounts ORDER BY recordID DESC LIMIT 1");
+        echo 'No data yet';
+    }
+    else{
+        $result = $conn->query("SELECT * FROM nxtAccounts ORDER BY recordID DESC LIMIT 1");
         $rows = array();
-        while($r = mysql_fetch_assoc($result)) {
+        while($r = $result->fetch_assoc()) {
             $rows['accs'][]= $r;
         }
 
         print json_encode($rows);
-
-    }
-    else{
-        echo 'No data yet';
     }
 
 ?>
