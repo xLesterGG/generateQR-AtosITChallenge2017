@@ -14,9 +14,15 @@
         $numberofBatches = $put_vars['numberOfBatches'];
 
         $sql = "UPDATE nxtAccounts SET numberOfBatches = '$numberofBatches' WHERE recordID = '$recordID' ";
+<<<<<<< HEAD
 
         // echo $sql;
 
+=======
+
+        // echo $sql;
+
+>>>>>>> 968e7003e3233e3290475041230abbc1eff7c638
         if($conn->query($sql) === true){
             echo "Successfully updated batch count";
         }
@@ -24,7 +30,20 @@
             echo "Error: " . $sql;
         }
 
+<<<<<<< HEAD
 
+=======
+        // $result = @mysql_query($sql);
+        //
+        // if($result)
+        // {
+        //     echo "Successfully updated batch count";
+        // }
+        // else
+        // {
+        //     echo "Error: " . $sql;
+        // }
+>>>>>>> 968e7003e3233e3290475041230abbc1eff7c638
     }
 
 ?>
