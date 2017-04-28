@@ -4,19 +4,17 @@
     if(isset($_POST['nxtAccountNumber']) || isset($_POST['numberOfBatches']) || isset($_POST['secretPhrase']))
     {
         $nxtAccountNumber = $_POST['nxtAccountNumber'];
-        $numberofBatches = $_POST['numberOfBatches'];
+        $numberOfBatches = $_POST['numberOfBatches'];
         $secretPhrase = $_POST['secretPhrase'];
 
-        $sql = "INSERT INTO nxtaccounts(nxtAccountNumber,numberofBatches,secretPhrase) VALUES ('$nxtAccountNumber','$numberofBatches','$secretPhrase')";
+        $sql = "INSERT INTO nxtAccounts(nxtAccountNumber,numberOfBatches,secretPhrase) VALUES ('$nxtAccountNumber',$numberOfBatches,'$secretPhrase')";
+        // $sql = "INSERT INTO nxtAccounts(nxtAccountNumber,numberOfBatches,secretPhrase) VALUES ('aaa','bb','cc');";
 
-        $result = @mysql_query($sql);
-
-        if($result)
+        if($conn->query($sql))
         {
             echo "Successfully added";
         }
-        else
-        {
+        else{
             echo "Error: " . $sql ;
         }
     }
